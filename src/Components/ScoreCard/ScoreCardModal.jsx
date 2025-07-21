@@ -1,12 +1,11 @@
 import Button from "../Buttons/Button";
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import authtoken from "../../Constants/constants";
 const ScoreCardModal = ({
   show,
   onClose,
   onSubmit,
-  initialData,
   isEdit,
   isView,
   shouldNavigate = true, // Default to true
@@ -15,7 +14,6 @@ const ScoreCardModal = ({
 }) => {
   const [groups, setGroups] = useState([]);
   const [URL, setURL] = useState("");
-  const authtoken = localStorage.getItem("token");
   useEffect(() => {
     const fetchGroups = async () => {
       const response = await fetch(
@@ -29,7 +27,7 @@ const ScoreCardModal = ({
         }
       );
       const data = await response.json();
-      setGroups(data.data); // or setGroups(data.groups) if your API returns { groups: [...] }
+      setGroups(data.data);
     };
     fetchGroups();
     const fetchCoachingForms = async () => {
@@ -50,27 +48,23 @@ const ScoreCardModal = ({
     fetchCoachingForms();
   }, []);
   const [coachingForms, setCoachingForms] = useState([]);
-
   const [isChecked, setIsChecked] = useState(false);
   const [showGroupDropdown, setShowGroupDropdown] = useState(false);
-
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   };
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(
-    initialData || {
-      title: "",
-      description: "",
-      visibleToManagers: false,
-      coachingPurposeOnly: false,
-      groups: [],
-      allgroup: false,
-      evaluationType: "",
-      scoringModel: "",
-      coachingForm: "",
-    }
-  );
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    visibleToManagers: false,
+    coachingPurposeOnly: false,
+    groups: [],
+    allgroup: false,
+    evaluationType: "",
+    scoringModel: "",
+    coachingForm: "",
+  });
 
   const handleSelectAllGroups = (e) => {
     const checked = e.target.checked;
@@ -79,11 +73,7 @@ const ScoreCardModal = ({
       groups: checked ? groups.map((g) => g._id) : [],
     }));
   };
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
+
   const formRef = useRef(null);
   if (!show) return null;
 
@@ -109,10 +99,6 @@ const ScoreCardModal = ({
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const newVar = {
-        ...formData,
-        id: initialData._id, // or data._id, depending on API response
-      };
       const response = await fetch(
         "https://fldemo.fivelumenstest.com/api/auth/scorecards/update/settings",
         {
@@ -121,7 +107,7 @@ const ScoreCardModal = ({
             "Content-Type": "application/json",
             authorization: authtoken,
           },
-          body: JSON.stringify(newVar),
+          body: JSON.stringify({}),
         }
       );
       console.log("My response from Add Api", response);
@@ -132,6 +118,7 @@ const ScoreCardModal = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     localStorage.setItem("scorecardtitle", formData.title);
     const handleAll = async () => {
       try {
@@ -147,9 +134,6 @@ const ScoreCardModal = ({
           }
         );
         const data = await response.json();
-        console.log(" usman acha hai", data);
-
-        // See response in browser console
         console.log("API response from get:", data);
       } catch (error) {
         console.error("API Error:", error);
@@ -171,7 +155,6 @@ const ScoreCardModal = ({
       );
       console.log("My response from Add Api", response);
       const result = await response.json();
-      // See response in browser console
       console.log("API Response from data222:", result);
       const createdId = result?.data?._id;
       console.log(createdId);
@@ -214,8 +197,7 @@ const ScoreCardModal = ({
           <div className="text">
             <h2 className="text-xl font-semibold mb-2">{title}</h2>
             <p className="text-lg font-semibold text-gray-600">
-              {" "}
-              {headerdescription}{" "}
+              {headerdescription}
             </p>
           </div>
           <div className="btn bg-white p-3 items-start text-gray-900 rounded-full shadow-lg h-10">

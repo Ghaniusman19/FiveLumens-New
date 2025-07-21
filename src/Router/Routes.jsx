@@ -16,10 +16,10 @@ import APIs from "../Pages/APIs";
 import Login from "../Pages/Login";
 import PrivateRoute from "../Components/PrivateRoute";
 import SignUp from "../Pages/SignUp";
-import ScoreCardEdit from "../Pages/ScoreCardEdit";
+import ScorecardEdit from "../Pages/ScoreCardEdit";
 import NotFound from "../Pages/NotFound";
 import ForgetPassword from "../Pages/ForgetPassword";
-import { Edit } from "lucide-react";
+// import { Edit } from "lucide-react";
 export const route = [
   {
     path: "/forget-password",
@@ -114,7 +114,7 @@ export const route = [
     isPublic: false,
   },
   {
-    path: "/Quality/scorecard",
+    path: "/Quality/scorecards",
     element: (
       <PrivateRoute>
         <ScoreCard />
@@ -126,7 +126,7 @@ export const route = [
     path: "/Quality/scorecard/edit",
     element: (
       <PrivateRoute>
-        <ScoreCardEdit />
+        <ScorecardEdit />
       </PrivateRoute>
     ),
     isPublic: false,

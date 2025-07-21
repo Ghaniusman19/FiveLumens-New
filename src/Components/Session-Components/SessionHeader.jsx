@@ -1,4 +1,4 @@
-import Button from "../ButtonComponent/Button";
+import Button from "../Buttons/Button";
 import AddSectionModal from "./AddSectionModal";
 import { useState, useEffect } from "react";
 const SessionHeader = () => {

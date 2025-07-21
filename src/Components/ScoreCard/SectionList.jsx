@@ -79,168 +79,154 @@ const SectionList = ({
   const isTotalPointsSection = (section) => {
     return section.name === "Total Possible Points";
   };
-  // ...existing code...
-
-  // Calculate total possible points (sum of all criteria values in all sections except "Total Possible Points")
-  const totalPossiblePoints = sections
-    .filter((section) => section.name !== "Total Possible Points")
-    .reduce(
-      (sectionSum, section) =>
-        sectionSum +
-        section.criteria.reduce((sum, c) => sum + (Number(c.value) || 0), 0),
-      0
-    );
 
   return (
     <div className="mt-5">
-      {sections
-        .filter((section) => section.name !== "Total Possible Points")
-        .map((section, index) => (
-          <div
-            key={section.id}
-            draggable
-            onDragStart={(e) =>
-              onSectionDragStart && onSectionDragStart(e, index)
-            }
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => onSectionDrop && onSectionDrop(e, index)}
-            className="mb-4 border border-gray-200 rounded-md"
-          >
-            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-t-md">
-              <div className="font-medium flex-grow">{section.name}</div>
-              <div className="font-semibold mr-5">
-                {
-                  // Calculate the sum of all criterion values for this section
-                  section.criteria.reduce(
-                    (sum, c) => sum + (Number(c.value) || 0),
-                    0
-                  )
-                }
-              </div>
-              {/* Only show the menu for sections other than "Total Possible Points" */}
-              {!isTotalPointsSection(section) && (
-                <div
-                  className="relative"
-                  ref={(el) => (menuRefs.current[section.id] = el)}
-                >
-                  <button
-                    className="p-1 flex items-center justify-center"
-                    onClick={() => toggleMenu(section.id)}
-                  >
-                    <span className="text-xl font-bold">⋮</span>
-                  </button>
-
-                  {openMenuId === section.id && (
-                    <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-md z-10 min-w-[180px]">
-                      <button
-                        className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
-                        onClick={() => {
-                          onEditSection({ id: section.id, name: section.name });
-                          setOpenMenuId(null);
-                        }}
-                      >
-                        Edit Section
-                      </button>
-                      <button
-                        className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
-                        onClick={() => {
-                          onDeleteSection(section.id);
-                          setOpenMenuId(null);
-                        }}
-                      >
-                        Delete Section
-                      </button>
-                      <button
-                        className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
-                        onClick={() => {
-                          onAddCriteria(section.id);
-                          setOpenMenuId(null);
-                        }}
-                      >
-                        Add Scoring Criteria
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
+      {sections.map((section, index) => (
+        <div
+          key={section.id}
+          draggable
+          onDragStart={(e) =>
+            onSectionDragStart && onSectionDragStart(e, index)
+          }
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => onSectionDrop && onSectionDrop(e, index)}
+          className="mb-4 border border-gray-200 rounded-md"
+        >
+          <div className="flex justify-between items-center p-4 bg-gray-50 rounded-t-md">
+            <div className="font-medium flex-grow">{section.name}</div>
+            <div className="font-semibold mr-5">
+              {
+                // Calculate the sum of all criterion values for this section
+                section.criteria.reduce(
+                  (sum, c) => sum + (Number(c.value) || 0),
+                  0
+                )
+              }
             </div>
+            {!isTotalPointsSection(section) && (
+              <div
+                className="relative"
+                ref={(el) => (menuRefs.current[section.id] = el)}
+              >
+                <button
+                  className="p-1 flex items-center justify-center"
+                  onClick={() => toggleMenu(section.id)}
+                >
+                  <span className="text-xl font-bold">⋮</span>
+                </button>
 
-            {section.criteria.length > 0 && (
-              <div className="px-4 py-2.5">
-                {section.criteria.map((criterion, cIndex) => {
-                  const criteriaMenuId = getCriteriaMenuId(
-                    section.id,
-                    criterion.id
-                  );
-                  return (
-                    <div
-                      key={criterion.id}
-                      className="py-2 border-b border-gray-100 last:border-b-0 flex justify-between items-center"
-                      draggable
-                      onDragStart={(e) =>
-                        handleCriteriaDragStart(e, section.id, cIndex)
-                      }
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => handleCriteriaDrop(e, section.id, cIndex)}
+                {openMenuId === section.id && (
+                  <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-md z-10 min-w-[180px]">
+                    <button
+                      className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
+                      onClick={() => {
+                        onEditSection({ id: section.id, name: section.name });
+                        setOpenMenuId(null);
+                      }}
                     >
-                      <div className="flex-grow">{criterion.name}</div>
-                      {/* Input for criterion value */}
-                      <input
-                        type="number"
-                        className="w-16 border rounded px-2 py-1 mr-2"
-                        value={criterion.value}
-                        onChange={(e) => {
-                          // Call a prop to update the value in parent
-                          if (typeof onUpdateCriteriaValue === "function") {
-                            onUpdateCriteriaValue(
-                              section.id,
-                              criterion.id,
-                              Number(e.target.value)
-                            );
-                          }
-                        }}
-                        maxLength={3}
-                      />
-                      <div
-                        className="relative"
-                        ref={(el) =>
-                          (criteriaMenuRefs.current[criteriaMenuId] = el)
-                        }
-                      >
-                        <button
-                          className="p-1 flex items-center justify-center"
-                          onClick={() => toggleCriteriaMenu(criteriaMenuId)}
-                        >
-                          <span className="text-lg font-bold">⋮</span>
-                        </button>
+                      Edit Section
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
+                      onClick={() => {
+                        onDeleteSection(section.id);
+                        setOpenMenuId(null);
+                      }}
+                    >
+                      Delete Section
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
+                      onClick={() => {
+                        onAddCriteria(section.id);
+                        setOpenMenuId(null);
+                      }}
+                    >
+                      Add Scoring Criteria
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
-                        {openCriteriaMenuId === criteriaMenuId && (
-                          <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-md z-10 min-w-[180px]">
-                            <button
-                              className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
-                              onClick={() => {
-                                onEditCriteria(section.id, criterion);
-                                setOpenCriteriaMenuId(null);
-                              }}
-                            >
-                              Edit Criteria
-                            </button>
-                            <button
-                              className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
-                              onClick={() => {
-                                onDeleteCriteria(section.id, criterion.id);
-                                setOpenCriteriaMenuId(null);
-                              }}
-                            >
-                              Delete Criteria
-                            </button>
-                          </div>
-                        )}
-                      </div>
+          {section.criteria.length > 0 && (
+            <div className="px-4 py-2.5">
+              {section.criteria.map((criterion, cIndex) => {
+                const criteriaMenuId = getCriteriaMenuId(
+                  section.id,
+                  criterion.id
+                );
+                return (
+                  <div
+                    key={criterion.id}
+                    className="py-2 border-b border-gray-100 last:border-b-0 flex justify-between items-center"
+                    draggable
+                    onDragStart={(e) =>
+                      handleCriteriaDragStart(e, section.id, cIndex)
+                    }
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleCriteriaDrop(e, section.id, cIndex)}
+                  >
+                    <div className="flex-grow">{criterion.name}</div>
+                    {/* Input for criterion value */}
+                    <input
+                      type="number"
+                      className="w-16 border rounded px-2 py-1 mr-2"
+                      value={criterion.value}
+                      onChange={(e) => {
+                        // Call a prop to update the value in parent
+                        if (typeof onUpdateCriteriaValue === "function") {
+                          onUpdateCriteriaValue(
+                            section.id,
+                            criterion.id,
+                            Number(e.target.value)
+                          );
+                        }
+                      }}
+                      maxLength={3}
+                    />
+                    <div
+                      className="relative"
+                      ref={(el) =>
+                        (criteriaMenuRefs.current[criteriaMenuId] = el)
+                      }
+                    >
+                      <button
+                        className="p-1 flex items-center justify-center"
+                        onClick={() => toggleCriteriaMenu(criteriaMenuId)}
+                      >
+                        <span className="text-lg font-bold">⋮</span>
+                      </button>
+
+                      {openCriteriaMenuId === criteriaMenuId && (
+                        <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-md shadow-md z-10 min-w-[180px]">
+                          <button
+                            className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
+                            onClick={() => {
+                              onEditCriteria(section.id, criterion);
+                              setOpenCriteriaMenuId(null);
+                            }}
+                          >
+                            Edit Criteria
+                          </button>
+                          <button
+                            className="w-full text-left px-4 py-2.5 hover:bg-gray-100"
+                            onClick={() => {
+                              onDeleteCriteria(section.id, criterion.id);
+                              setOpenCriteriaMenuId(null);
+                            }}
+                          >
+                            Delete Criteria
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
-                {/* <>
+                  </div>
+                );
+              })}
+              {/* <>
                   <div className="mt-6 border-t pt-4 flex justify-between items-center">
                     <div className="font-bold text-lg">
                       Total Possible Points
@@ -252,10 +238,10 @@ const SectionList = ({
                  
                   </div>
                 </> */}
-              </div>
-            )}
-          </div>
-        ))}
+            </div>
+          )}
+        </div>
+      ))}
 
       {!showAddCriteriaModal &&
         sections

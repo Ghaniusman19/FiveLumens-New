@@ -40,5 +40,5 @@
     },
   };
 
-   export  const authToken = localStorage.getItem("token");
-  
+   const authToken = localStorage.getItem("token");
+  export default authToken

@@ -1,4 +1,4 @@
-import Button from "../ButtonComponent/Button";
+import Button from "../Buttons/Button";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const CoachingFormModal = ({ show, onClose, onSubmit }) => {

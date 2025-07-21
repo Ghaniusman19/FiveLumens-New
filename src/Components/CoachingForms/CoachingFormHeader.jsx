@@ -1,7 +1,7 @@
 
 import React from "react";
 import CoachingFormModal from "./CoachingFormModal";
-import Button from "../ButtonComponent/Button";
+import Button from "../Buttons/Button";
 import { useState, useEffect } from "react";
 import { Plus, Search, SlidersHorizontal } from "lucide-react";
 

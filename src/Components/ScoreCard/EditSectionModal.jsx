@@ -9,7 +9,6 @@ const EditSectionModal = ({ section, onClose, onSave }) => {
   useEffect(() => {
     setSectionName(section.name);
   }, [section]);
-
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
